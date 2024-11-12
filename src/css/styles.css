@@ -1,0 +1,7 @@
+/* Common styles */
+@import url('./common.css');
+
+
+/* Specific Pages styles*/
+@import url('./gallery.css');
+@import url('./form.css');

@@ -1,0 +1,75 @@
+
+body{
+    font-family: "Montserrat", serif;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 1.5;
+        letter-spacing: 4%;
+}
+.container{
+    margin: 0 auto;
+    max-width: 408px;
+
+
+}
+
+.feedback-form {
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 8px;
+    box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.1),
+        0 -4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    
+   
+
+
+}
+
+.feedback-form label {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+}
+
+.feedback-form input,
+.feedback-form textarea{
+    border: 1px solid rgb(151, 150, 150);
+    
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+
+
+.feedback-form input,
+.feedback-form textarea,
+.feedback-form button{
+    font: inherit;
+    padding: 8px 16px;  
+}
+
+
+
+textarea {
+    resize: none;
+}
+
+button{
+    margin-top: 8px;
+    width: 95px;
+    height: 40px;
+    color: white;
+    background-color: rgba(78, 117, 255, 1);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:hover{
+    background-color : rgba(108, 140, 255, 1);
+}

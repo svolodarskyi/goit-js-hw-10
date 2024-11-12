@@ -1,0 +1,33 @@
+body{
+    max-width: calc(1128px + 24px + 24px + 24px + 24px);
+    padding: 48px;    
+}
+
+.gallery {
+
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    align-items: center;
+    justify-content: center;
+}
+
+.gallery-item {
+    width: 360px;
+    height: 200px;
+}
+
+
+.gallery-image{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+}
+
+.gallery-image:hover,
+.gallery-item:focus {
+    transform: scale(1.03);
+}
