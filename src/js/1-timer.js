@@ -6,67 +6,43 @@ import "flatpickr/dist/flatpickr.min.css";
 const dateTimePicker = document.querySelector("input#datetime-picker");
 const button = document.querySelector('button[data-start]');
 const dataDays = document.querySelector('[data-days]');
-const dataHours= document.querySelector('[data-hours]');
+const dataHours = document.querySelector('[data-hours]');
 const dataMinutes = document.querySelector('[data-minutes]');
 const dataSeconds = document.querySelector('[data-seconds]');
 
-let userSelectedDate = null;
-
-button.addEventListener('click', handleStart);
+disableElement(button);
 
 function disableElement(...elements) {
     elements.forEach((element) => element.classList.add('disabled'));
 }
 
-
 function enableElement(...elements) {
     elements.forEach((element) => element.classList.remove('disabled'));
 }
 
-function getTimestamp(date) {
-    const dateObj = new Date(date);
-    return dateObj.getTime();
-}
-
-function getTimestampDifference(timestamp) {
-    const currentTime = Date.now();
-    return timestamp - currentTime;
-}
-
-function checkPickedTimevalidity(timestamp) {
-    const currentTime = Date.now();
-    if(currentTime < timestamp){
-        return true
-    }
-    return false;
-}
-
-function validatePickedTime(timestamp = getTimestamp(dateTimePicker.value)) {
-    if (!checkPickedTimevalidity(timestamp)) {
+function validatePickedTime(timestamp) {
+    const isFutureDate = timestamp > Date.now();
+    if (isFutureDate) {
+        enableElement(button);
+    } else {
         disableElement(button);
         iziToast.warning({
             message: "Please choose a date in the future",
             position: "topRight"
         });
-        return false
     }
-    else {
-        enableElement(button);
-        return true
-    }
+    return isFutureDate;
 }
 
-
-
 const options = {
-  enableTime: true,
-  time_24hr: true,
-  defaultDate: new Date(),
-  minuteIncrement: 1,
+    enableTime: true,
+    time_24hr: true,
+    defaultDate: new Date(),
+    minuteIncrement: 1,
     onClose(selectedDates) {
-        const pickedDateTimestamp = getTimestamp(selectedDates[0])
-        validatePickedTime(pickedDateTimestamp)
-  },
+        const pickedDateTimestamp = selectedDates[0].getTime();
+        validatePickedTime(pickedDateTimestamp);
+    }
 };
 
 function updateClockFace({ days, hours, minutes, seconds }) {
@@ -76,69 +52,54 @@ function updateClockFace({ days, hours, minutes, seconds }) {
     dataSeconds.textContent = seconds;
 }
 
-class Timer{
-    constructor({onTick, startTime}){
+class Timer {
+    constructor({ onTick, endTime }) {
         this.onTick = onTick;
-        this.startTime = startTime;
+        this.endTime = endTime;
         this.intervalId = null;
-        this.timerInitTime = null;
-        this.init();
-    }
-
-    init() {
-        this.timerInitTime = getTimestampDifference(this.startTime);
-        this.onTick(this.convertMs(this.timerInitTime));
     }
 
     start() {
         disableElement(dateTimePicker, button);
-        let elapsedTime = 0;
-        
         this.intervalId = setInterval(() => {
-            elapsedTime += 1000;
-            if (elapsedTime <= this.timerInitTime) {
-                this.onTick(this.convertMs(this.timerInitTime - elapsedTime));
+            const remainingTime = this.endTime - Date.now();
+
+            if (remainingTime <= 0) {
+                clearInterval(this.intervalId);
+                enableElement(dateTimePicker);
+                updateClockFace(this.convertMs(0));
+                return;
             }
-            else {
-                clearInterval(this.intervalId)
-                enableElement(dateTimePicker)
-            }
-        },1000)
+
+            this.onTick(this.convertMs(remainingTime));
+        }, 1000);
     }
 
     convertMs(ms) {
-        // Number of milliseconds per unit of time
+        const day = 86400000;
+        const hour = 3600000;
+        const minute = 60000;
         const second = 1000;
-        const minute = second * 60;
-        const hour = minute * 60;
-        const day = hour * 24;
 
-        // Remaining days
         const days = this.pad(Math.floor(ms / day));
-        // Remaining hours
         const hours = this.pad(Math.floor((ms % day) / hour));
-        // Remaining minutes
-        const minutes = this.pad(Math.floor(((ms % day) % hour) / minute));
-        // Remaining seconds
-        const seconds = this.pad(Math.floor((((ms % day) % hour) % minute) / second));
+        const minutes = this.pad(Math.floor((ms % hour) / minute));
+        const seconds = this.pad(Math.floor((ms % minute) / second));
 
         return { days, hours, minutes, seconds };
-    };
+    }
 
-    pad(val) {
-        return String(val).padStart(2,"0");
-    };
+    pad(value) {
+        return String(value).padStart(2, "0");
+    }
 }
 
-function handleStart(event) {
-    if (validatePickedTime()) {
-        const timer = new Timer({ onTick: updateClockFace, startTime: getTimestamp(dateTimePicker.value) });    
+function handleStart() {
+    const selectedTime = dateTimePicker.value ? new Date(dateTimePicker.value).getTime() : null;
+    if (selectedTime && validatePickedTime(selectedTime)) {
+        const timer = new Timer({ onTick: updateClockFace, endTime: selectedTime });
         timer.start();
     }
-    
-    
 }
-
-
 
 flatpickr(dateTimePicker, options);
