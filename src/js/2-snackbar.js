@@ -11,7 +11,7 @@ button.addEventListener('click', handleSubmit);
 
 const makePromise = (delay, shoulResolve) => { 
     return new Promise((resolve, reject) => {
-        setInterval(() => {
+        setTimeout(() => {
             if (shoulResolve) {
                 resolve("Fullfilled")
             } else { 
