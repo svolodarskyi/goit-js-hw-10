@@ -10,6 +10,7 @@ const dataHours = document.querySelector('[data-hours]');
 const dataMinutes = document.querySelector('[data-minutes]');
 const dataSeconds = document.querySelector('[data-seconds]');
 
+button.addEventListener("click", handleStart)
 disableElement(button);
 
 function disableElement(...elements) {
@@ -57,10 +58,17 @@ class Timer {
         this.onTick = onTick;
         this.endTime = endTime;
         this.intervalId = null;
+        this.init();
+    }   
+
+    init() {
+        const remainingTime = this.endTime - Date.now();
+        this.onTick(this.convertMs(remainingTime));
     }
 
     start() {
         disableElement(dateTimePicker, button);
+        
         this.intervalId = setInterval(() => {
             const remainingTime = this.endTime - Date.now();
 
