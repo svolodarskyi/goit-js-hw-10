@@ -13,9 +13,9 @@ const makePromise = (delay, shoulResolve) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             if (shoulResolve) {
-                resolve("Fullfilled")
+                resolve(delay)
             } else { 
-                reject("Rejected")
+                reject(delay)
             }
         },delay)
     })
@@ -31,13 +31,12 @@ function handleSubmit(event) {
     makePromise(delay, shouldResolve)
         .then(res =>
                 iziToast.success({
-                 message: `✅ Fulfilled promise in ${delay}ms`,
+                 message: `✅ Fulfilled promise in ${res}ms`,
             position: "topRight"
                 }))
          .catch(err =>
                 iziToast.error({
-                 message: `❌ Rejected promise in ${delay}ms`,
+                 message: `❌ Rejected promise in ${err}ms`,
             position: "topRight"
                 }))
 }
-
